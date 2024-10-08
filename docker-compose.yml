@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  server:
+    build:
+      context: ./server
+    container_name: server
+    environment:
+      MONGO_URI: mongodb://mongo:27017/mydatabase
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./client
+    container_name: client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:
